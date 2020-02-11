@@ -409,8 +409,10 @@ public class TerraService {
 			String line = "";
 			String tempLine = "";
 			while ((tempLine = reader.readLine()) != null) {
-				String key = tempLine.split("=")[0].trim();
-				String value = tempLine.split("=")[1].trim();
+				
+				System.out.println("SPINNAKER PROPERTY whole line -> "+ tempLine);
+				String key = tempLine.split("=",2)[0].trim();
+				String value = tempLine.split("=",2)[1].trim();
 				planExeOutputValuesJsonObj.put(key, value);
 				line = line + tempLine.trim() + System.lineSeparator();
 				System.out.println("SPINNAKER_PROPERTY_"+ key +"="+ value);
