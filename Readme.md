@@ -11,7 +11,7 @@ Need to run terraSpin locally for development? Here's what you need to setup and
 we are using maven as build tool for buliding source code so maven 3 and uper version is required in your machine to build this source code.
 
 Clone this repository 
-git clone git@github.com:opsmx
+git clone https://github.com/OpsMx/terraform-stage.git
 
 Once cloning is done go inside spinterra-core directory run below command to build application 
 cmd- mvn clean install  
