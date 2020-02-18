@@ -1,7 +1,7 @@
 # Terraspin -- :whale:
 
 A microservice to integrate with Spinnaker for planning, applying and destroying Terraform plans
-[TerraSpin Docs](https://docs.opsmx.com/codelabs/terraform-spinnaker) 
+[TerraSpin Docs](https://docs.opsmx.com/codelabs/terraform-customjob-spinnaker) 
 
 ## Developing Terraspin
 Need to run terraSpin locally for development? Here's what you need to setup and run:
