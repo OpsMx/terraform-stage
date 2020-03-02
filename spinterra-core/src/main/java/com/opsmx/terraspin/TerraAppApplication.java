@@ -25,7 +25,7 @@ import org.springframework.context.ConfigurableApplicationContext;
 public class TerraAppApplication {
 
 	public static void main(String[] args) {
-//		SpringApplication.run(TerraAppApplication.class, args);
+        //SpringApplication.run(TerraAppApplication.class, args);
 		ConfigurableApplicationContext ctx = SpringApplication.run(TerraAppApplication.class, args);
 		ctx.close();
 	}

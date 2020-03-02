@@ -229,8 +229,8 @@ public class ZipUtil {
 		ZipUtil ZipUtil = new ZipUtil();
 
 		String targetPath = "/home/terraspin/trytest/pipelineId-spinPipeId";
-		String zipFilePath = "/home/terraspin/test.zip";
-		String unzippedFolderPath = "/home/terraspin/abc";
+		String zipFilePath = "/home/opsmx/lalit/work/opsmx/extrathing/timepa/gittest2.zip";
+		String unzippedFolderPath = "/home/opsmx/lalit/work/opsmx/extrathing/timepa/gittest2";
 		String password = "your_password"; // keep it EMPTY<""> for applying no password protection
 
 		// ZipUtil.zip(targetPath, zipFilePath, password);

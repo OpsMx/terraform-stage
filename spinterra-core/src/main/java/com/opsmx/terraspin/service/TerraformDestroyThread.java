@@ -34,10 +34,10 @@ import com.opsmx.terraspin.util.TerraAppUtil;
 class TerraformDestroyThread implements Runnable {
 
 	private static final Logger log = LoggerFactory.getLogger(TerraformDestroyThread.class);
-	
+
 	private File tfRootModulepath;
-	private File planstatusfileDir;	
-	private String variableOverrideFile; 
+	private File planstatusfileDir;
+	private String variableOverrideFile;
 
 	public TerraformDestroyThread() {
 	}
@@ -54,23 +54,23 @@ class TerraformDestroyThread implements Runnable {
 	public void run() {
 
 		String deleteScriptPath = System.getProperty("user.home") + "/.opsmx/script/exeTerraformDestroy.sh";
-		log.info("terraform destroy script path : "+deleteScriptPath);
+		log.info("In terraform destroy part ");
 		TerraAppUtil terraAppUtil = new TerraAppUtil();
 		Process exec;
 		try {
-			
-			if(StringUtils.isEmpty(variableOverrideFile)) {
+
+			if (StringUtils.isEmpty(variableOverrideFile)) {
 				exec = Runtime.getRuntime().exec(new String[] { "/bin/sh", "-c",
 						"printf 'yes' | sh " + deleteScriptPath + " " + tfRootModulepath.getPath() });
 				exec.waitFor();
-				
-			}else {
-				
-				exec = Runtime.getRuntime().exec(new String[] { "/bin/sh", "-c",
-						"printf 'yes' | sh " + deleteScriptPath + " " + tfRootModulepath.getPath() + " " + variableOverrideFile });
+
+			} else {
+
+				exec = Runtime.getRuntime().exec(new String[] { "/bin/sh", "-c", "printf 'yes' | sh " + deleteScriptPath
+						+ " " + tfRootModulepath.getPath() + " " + variableOverrideFile });
 				exec.waitFor();
 			}
-	
+
 			BufferedReader reader = new BufferedReader(new InputStreamReader(exec.getInputStream()));
 			String line = "";
 			String tempLine = "";
@@ -95,7 +95,7 @@ class TerraformDestroyThread implements Runnable {
 			} else {
 				statusRootObj.put("status", "TERMINAL");
 				statusRootObj.put("output", line2);
-				log.info("terraform destroy script error stream : "+line2);
+				log.info("terraform destroy script error stream : " + line2);
 			}
 
 			String filePath = planstatusfileDir.getPath() + "/destroyStatus";
@@ -103,12 +103,12 @@ class TerraformDestroyThread implements Runnable {
 			InputStream statusInputStream = new ByteArrayInputStream(
 					statusRootObj.toString().getBytes(StandardCharsets.UTF_8));
 			terraAppUtil.overWriteStreamOnFile(statusFile, statusInputStream);
-			log.debug("terraform destroy execution status :"+statusRootObj);
+			log.debug("terraform destroy execution status :" + statusRootObj);
 		} catch (IOException | InterruptedException e) {
-			log.info("terraform destroy execution execption message :"+e.getMessage());			
-		    throw new RuntimeException("terraform destroy execution",e);
+			log.info("terraform destroy execution execption message :" + e.getMessage());
+			throw new RuntimeException("terraform destroy execution", e);
 		}
-		
+
 	}
 
 	public File getFile() {

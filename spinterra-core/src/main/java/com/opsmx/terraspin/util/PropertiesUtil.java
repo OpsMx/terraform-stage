@@ -23,7 +23,6 @@ import java.util.Properties;
 
 public class PropertiesUtil {
 
-	//private static final String CONFIG_FILE = "/home/opsmx/lalit/work/opsmx/Terraform-spinnaker/TerraSpin/container/application.properties"; 
 	private static final String CONFIG_FILE = "/home/terraspin/opsmx/app/config/application.properties"; 
 	private static Properties properties; // Singleton instance
 	private PropertiesUtil() {}  // Dont instantiate a singleton class

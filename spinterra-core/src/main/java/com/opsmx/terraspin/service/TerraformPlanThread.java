@@ -55,7 +55,7 @@ class TerraformPlanThread implements Runnable {
 	@Override
 	public void run() {
 		String planScriptPath = System.getProperty("user.home") + "/.opsmx/script/exeTerraformPlan.sh";
-		log.info("terraform plan script path : "+planScriptPath);
+		log.info("In terraform plan part ");
 		TerraAppUtil terraAppUtil = new TerraAppUtil();
 		Process exec;
 		try {

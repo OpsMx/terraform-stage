@@ -43,6 +43,7 @@ public class ApplicationStartup implements ApplicationListener<ContextRefreshedE
 	public void onApplicationEvent(final ContextRefreshedEvent event) {
 		
 		String currentComponent = System.getenv("component");
+		log.info("Given current Component -> " + currentComponent);
 		
 		if(StringUtils.equalsIgnoreCase("plan", currentComponent)) {
 			PlanComponent planComponent = new PlanComponent();

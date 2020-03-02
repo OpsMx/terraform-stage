@@ -5,9 +5,17 @@ MAINTAINER OpsMx
 RUN apt-get update && apt-get install -y \
     git \
     curl \
+    openssl\
     jq \
     wget \
     unzip
+
+RUN curl -s https://packagecloud.io/install/repositories/github/git-lfs/script.deb.sh | bash
+
+RUN apt-get install -y \
+    git-lfs 
+
+#RUN git lfs install
 
 RUN groupadd -g 999 terraspin && \
     useradd -r -u 999 -g terraspin terraspin && \
@@ -16,7 +24,7 @@ RUN groupadd -g 999 terraspin && \
 
 USER terraspin
 
-RUN mkdir -p /home/terraspin/artifact /home/terraspin/extra /home/terraspin/opsmx/app/config /home/terraspin/.ssh && \
+RUN mkdir -p /home/terraspin/artifact /home/terraspin/extra /home/terraspin/overridefilerepodir /home/terraspin/tfstatefilerepodir /home/terraspin/opsmx/app/config /home/terraspin/.ssh && \
     touch /home/terraspin/artifact/terraspin.log && \
     chmod 777 /home/terraspin/artifact/terraspin.log
 

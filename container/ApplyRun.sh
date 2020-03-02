@@ -12,7 +12,6 @@ java -jar /home/terraspin/artifact/TerraSpin.jar
 if [ $? -eq 0 ]; then
     echo -e '\n\n \t\t ================================ Terraform Apply Output ====================================== \t\t\n\n'
     jq .output /home/terraspin/.opsmx/spinnaker/applicationName-spinApp/pipelineName-spinPipe/pipelineId-spinPipeId/applyStatus | xargs -0 echo -e
-    echo -e '\n SPINNAKER_PROPERTY_RELEASEENV=apply \n'
     #while :; do echo '*print*'; sleep 5; done
     exit 0    
 else

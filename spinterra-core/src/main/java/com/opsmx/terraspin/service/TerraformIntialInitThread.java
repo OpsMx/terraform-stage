@@ -48,14 +48,12 @@ class TerraformIntialInitThread implements Runnable {
 	@Override
 	public void run() {
 		String initScriptPath = System.getProperty("user.home") + "/.opsmx/script/exeTerraformInit.sh";
-		log.info("terraform plan script path : " + initScriptPath);
+		log.info(" In terraform initial init part");
 		log.info("tfFilesDir: " + tfFilesDir);
 
 		TerraAppUtil terraAppUtil = new TerraAppUtil();
 		Process exec;
 		try {
-
-			log.info("In non variable override ");
 
 			exec = Runtime.getRuntime().exec(new String[] { "/bin/sh", "-c",
 					"printf 'yes' | sh " + initScriptPath + " " + tfFilesDir.getPath() });
@@ -82,10 +80,11 @@ class TerraformIntialInitThread implements Runnable {
 			if (exec.exitValue() == 0) {
 				statusRootObj.put("status", "SUCCESS");
 				statusRootObj.put("output", line);
+				log.info("terraform initial init script info stream : " + line);
 			} else {
 				statusRootObj.put("status", "TERMINAL");
 				statusRootObj.put("output", line2);
-				log.info("terraform plan script error stream : " + line2);
+				log.info("terraform initial init script error stream : " + line2);
 			}
 
 			String filePath = tfFilesDir.getPath() + "/planStatus";
@@ -93,9 +92,9 @@ class TerraformIntialInitThread implements Runnable {
 			InputStream statusInputStream = new ByteArrayInputStream(
 					statusRootObj.toString().getBytes(StandardCharsets.UTF_8));
 			terraAppUtil.overWriteStreamOnFile(statusFile, statusInputStream);
-			log.debug("terraform plan execution status :" + statusRootObj);
+			log.debug("terraform initial init execution status :" + statusRootObj);
 		} catch (IOException | InterruptedException e) {
-			log.info("terraform plan execution execption message :" + e.getMessage());
+			log.info("terraform initial init execution execption message :" + e.getMessage());
 			throw new RuntimeException("terraform plan execution", e);
 		}
 	}

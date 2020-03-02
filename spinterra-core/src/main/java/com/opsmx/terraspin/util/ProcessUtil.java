@@ -29,7 +29,7 @@ import com.opsmx.terraspin.component.ApplicationStartup;
 
 public class ProcessUtil {
 
-	private static final Logger log = LoggerFactory.getLogger(ApplicationStartup.class);
+	private static final Logger log = LoggerFactory.getLogger(ProcessUtil.class);
 	JSONObject statusRootObj = new JSONObject();
 	
 	@SuppressWarnings("unchecked")
@@ -73,17 +73,17 @@ public class ProcessUtil {
 			}
 
 		} catch (IOException | InterruptedException e) {
-			//log.info("terraform apply execution execption message :"+e.getMessage());			
-		    throw new RuntimeException("terraform apply execution error",e);
+			 log.info("Error in running command "+ e.getMessage());
+			 throw new RuntimeException("terraform apply execution error",e);
 		}
 	}
 	
 	
+@SuppressWarnings("unchecked")
 public boolean runcommandwithindir(String command, String dir) {
 		
 		Process exec;
 		try {
-			//exec = Runtime.getRuntime().exec(command, null, new File(dir) );
 			exec = Runtime.getRuntime().exec(new String[] { "/bin/sh", "-c", command }, null, new File(dir) );
 			exec.waitFor();
 
@@ -118,7 +118,7 @@ public boolean runcommandwithindir(String command, String dir) {
 			}
 
 		} catch (IOException | InterruptedException e) {
-			//log.info("terraform apply execution execption message :"+e.getMessage());			
+			log.info("Error in running command "+ e.getMessage());
 		    throw new RuntimeException("terraform apply execution error",e);
 		}
 	}

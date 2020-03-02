@@ -221,11 +221,9 @@ public class TerraAppUtil {
 			log.info("error in parsing json file! path : '/home/terraspin/opsmx/app/config/artifactaccounts.json' .");
 			e.printStackTrace();
 		}
-		log.info("current config :" + contentBuilder.toString());
+		log.debug("current config :" + contentBuilder.toString());
 		return contentBuilder.toString();
 	}
-	
-	
 	
 	public String getStrJson(String path) {
 		StringBuilder contentBuilder = new StringBuilder();

@@ -1,59 +1,61 @@
 job:
-  preconfigured:
-    kubernetes:
+  preconfigured: 
+  kubernetes:
       - label: TSPlanJob
-        type: customTSPlanJobStage 
+        application: terraformdemo
+        cloudProvider: kubernetes
+        credentials: target-aks-cluster
         description: Stage for terraspin plan operation
-        cloudProvider: kubernetes 
-        account: my-k8s-v2-account # kubernates account name (must exists in spinnaker) 
-        credentials: my-k8s-v2-account # same as account name above
-        waitForCompletion: true 
-        application: terraspin
+        account: target-aks-cluster
+        type: customTSPlanJobStage
+        waitForCompletion: true
         parameters:
-          - name: Artifact account
-            label: Artifact account
+          - defaultValue: >-
+              < artifact account name on which your terrafrom infracode present
+              >
             description: pass your artifact account name.
-            mapping: manifest.spec.template.spec.containers[0].env[0].value
-            defaultValue: "< artifact account name on which your terrafrom infracode present >"
-          - name: Terraform plan
-            label: Terraform plan
+            label: Artifact account
+            mapping: 'manifest.spec.template.spec.containers[0].env[0].value'
+            name: Artifact account
+          - defaultValue: < artifact path where terraform infracode present >
             description: pass terraform module repo where your tf infra code present.
-            mapping: manifest.spec.template.spec.containers[0].env[1].value
-            defaultValue: "< artifact path where terrafrom infracode present >"
-          - name: Override file
-            label: Override file
+            label: Terraform plan
+            mapping: 'manifest.spec.template.spec.containers[0].env[1].value'
+            name: Terraform plan
+          - defaultValue: < artifact override file path for overriding default values >
             description: pass overrideVariableFile path if you want to override variables.
-            mapping: manifest.spec.template.spec.containers[0].env[2].value
-            defaultValue: "< artifact override file path for overriding default values >"
-          - name: State repo
+            label: Override file
+            mapping: 'manifest.spec.template.spec.containers[0].env[2].value'
+            name: Override file
+          - defaultValue: >-
+              < specify repo name on which you want to store states of terraform
+              plan, apply and destroy >
+            description: >-
+              pass repo name where you want to save intermediate state of
+              terraform state.
             label: State repo
-            description: pass repo name where you want to save intermidiated state of terraform state.
-            mapping: manifest.spec.template.spec.containers[0].env[3].value
-            defaultValue: "< specify repo name on which you want to store states of terraform plan, apply and destroy >"
-          - name: UUId
-            label: UUId
+            mapping: 'manifest.spec.template.spec.containers[0].env[3].value'
+            name: State repo
+          - defaultValue: >-
+              < Unique string, give the same string in the plan, apply and
+              destroy stages >
             description: pass unique user id.
-            mapping: manifest.spec.template.spec.containers[0].env[4].value
-            defaultValue: "< Unique string, give the same string in the plan, apply and destroy stages >"
+            label: UUId
+            mapping: 'manifest.spec.template.spec.containers[0].env[4].value'
+            name: UUId
         manifest:
           apiVersion: batch/v1
           kind: Job
           metadata:
             name: terraspinplanjob
-            namespace: test1 # above kubenates account namespace to deploy this job, namespace should exits
+            namespace: spinterra
           spec:
             backoffLimit: 0
             template:
               spec:
-                restartPolicy: Never
-                volumes:
-                 - name: opsmx-terraspin-backend-config
-                   configMap:
-                     name: terraspinbackendconfig
-                containers: 
-                  - name: terraspinplan
-                    image: 'docker.io/opsmx11/terraspin:2.0'
-                    imagePullPolicy: Always
+                containers:
+                  - command:
+                      - PlanRun.sh
                     env:
                       - name: artifactAccount
                         value: 
@@ -62,135 +64,161 @@ job:
                       - name: variableOverrideFileRepo
                         value: 
                       - name: stateRepo
-                        value:
+                        value: 
                       - name: uuId
-                        value:
+                        value: 
                       - name: component
                         value: plan
-                    command: ["PlanRun.sh"]
+                    image: 'docker.io/opsmx11/terraspin:2.0'
+                    imagePullPolicy: Always
+                    name: terraspinplan
                     volumeMounts:
-                    - name: opsmx-terraspin-backend-config
-                      mountPath: /home/terraspin/opsmx/app/config/
+                      - mountPath: /home/terraspin/opsmx/app/config/
+                        name: opsmx-terraspin-backend-config
+                restartPolicy: Never
+                volumes:
+                  - configMap:
+                      name: terraspinbackendconfig
+                    name: opsmx-terraspin-backend-config
+
 
       - label: TSApplyJob
-        type: customTSApplyJobStage
-        description: Stage for terraspin plan operation
-        cloudProvider: kubernetes
-        account: my-k8s-v2-account 
-        credentials: my-k8s-v2-account
-        waitForCompletion: true
-        propertyFile: terraspinapply
         application: terraspin
+        cloudProvider: kubernetes
+        credentials: target-aks-cluster
+        description: Stage for terraspin apply operation
+        account: target-aks-cluster
+        propertyFile: terraspinapply
+        type: customTSApplyJobStage
+        waitForCompletion: true
         parameters:
-          - name: Artifact account
-            label: Artifact account
+          - defaultValue: >-
+              < artifact account name on which your terrafrom infracode present
+              >
             description: pass git account name.
-            mapping: manifest.spec.template.spec.containers[0].env[0].value
-            defaultValue: "< artifact account name on which your terrafrom infracode present >"
-          - name: Override file
-            label: Override file
+            label: Artifact account
+            mapping: 'manifest.spec.template.spec.containers[0].env[0].value'
+            name: Artifact account
+          - defaultValue: < artifact override file path for overriding default values >
             description: pass overrideVariableFile path if you want to override variables.
-            mapping: manifest.spec.template.spec.containers[0].env[1].value
-            defaultValue: "< artifact override file path for overriding default values >"
-          - name: State repo
+            label: Override file
+            mapping: 'manifest.spec.template.spec.containers[0].env[1].value'
+            name: Override file
+          - defaultValue: >-
+              < specify repo name on which you want to store states of terraform
+              plan, apply and destroy >
+            description: >-
+              pass repo name where you want to save intermediate state of
+              terraform state.
             label: State repo
-            description: pass repo name where you want to save intermidiated state of terraform state.
-            mapping: manifest.spec.template.spec.containers[0].env[2].value
-            defaultValue: "< specify repo name on which you want to store states of terraform plan, apply and destroy >"
-          - name: UUId
-            label: UUId
+            mapping: 'manifest.spec.template.spec.containers[0].env[2].value'
+            name: State repo
+          - defaultValue: >-
+              < Unique string, give the same string in the plan, apply and
+              destroy stages >
             description: pass unique user id.
-            mapping: manifest.spec.template.spec.containers[0].env[3].value
-            defaultValue: "< Unique string, give the same string in the plan, apply and destroy stages >"
+            label: UUId
+            mapping: 'manifest.spec.template.spec.containers[0].env[3].value'
+            name: UUId
         manifest:
           apiVersion: batch/v1
           kind: Job
           metadata:
             name: terraspinapplyjob
-            namespace: test1 
+            namespace: spinterra
           spec:
             backoffLimit: 0
             template:
               spec:
-                restartPolicy: Never
-                volumes:
-                 - name: opsmx-terraspin-backend-config
-                   configMap:
-                     name: terraspinbackendconfig
-                containers: 
-                  - name: terraspinapply
-                    image: 'docker.io/opsmx11/terraspin:2.0'
-                    imagePullPolicy: Always
+                containers:
+                  - command:
+                      - ApplyRun.sh
                     env:
                       - name: artifactAccount
                         value: 
                       - name: variableOverrideFileRepo
                         value: 
                       - name: stateRepo
-                        value:
+                        value: 
                       - name: uuId
-                        value:
+                        value: 
                       - name: component
                         value: apply
-                    command: ["ApplyRun.sh"]
+                    image: 'docker.io/opsmx11/terraspin:2.0'
+                    imagePullPolicy: Always
+                    name: terraspinapply
                     volumeMounts:
-                    - name: opsmx-terraspin-backend-config
-                      mountPath: /home/terraspin/opsmx/app/config/
+                      - mountPath: /home/terraspin/opsmx/app/config/
+                        name: opsmx-terraspin-backend-config
+                restartPolicy: Never
+                volumes:
+                  - configMap:
+                      name: terraspinbackendconfig
+                    name: opsmx-terraspin-backend-config
+
 
       - label: TSDestroyJob
-        type: customTSDestroyJobStage
-        description: Stage for terraspin plan operation
-        cloudProvider: kubernetes
-        account: my-k8s-v2-account 
-        credentials: my-k8s-v2-account
-        waitForCompletion: true
         application: terraspin
+        cloudProvider: kubernetes
+        credentials: target-aks-cluster
+        description: Stage for terraspin destroy operation
+        account: target-aks-cluster
+        type: customTSDestroyJobStage
+        waitForCompletion: true
         parameters:
-          - name: Artifact account
-            label: Artifact account
+          - defaultValue: >-
+              < artifact account name on which your terraform infracode present
+              >
             description: pass git account name.
-            mapping: manifest.spec.template.spec.containers[0].env[0].value
-            defaultValue: "< artifact account name on which your terrafrom infracode present >"
-          - name: State repo
+            label: Artifact account
+            mapping: 'manifest.spec.template.spec.containers[0].env[0].value'
+            name: Artifact account
+          - defaultValue: >-
+              < specify repo name on which you want to store states of terraform
+              plan, apply and destroy >
+            description: >-
+              pass repo name where you want to save intermediate state of
+              terraform state.
             label: State repo
-            description: pass repo name where you want to save intermidiated state of terraform state.
-            mapping: manifest.spec.template.spec.containers[0].env[1].value
-            defaultValue: "< specify repo name on which you want to store states of terraform plan, apply and destroy >"
-          - name: UUID
-            label: UUID
+            mapping: 'manifest.spec.template.spec.containers[0].env[1].value'
+            name: State repo
+          - defaultValue: >-
+              < Unique string, give the same string in the plan, apply and
+              destroy stages >
             description: pass unique user id.
-            mapping: manifest.spec.template.spec.containers[0].env[2].value
-            defaultValue: "< Unique string, give the same string in the plan, apply and destroy stages >"
+            label: UUID
+            mapping: 'manifest.spec.template.spec.containers[0].env[2].value'
+            name: UUID
         manifest:
           apiVersion: batch/v1
           kind: Job
           metadata:
             name: terraspindestroyjob
-            namespace: test1 
+            namespace: spinterra
           spec:
             backoffLimit: 0
             template:
               spec:
-                restartPolicy: Never
-                volumes:
-                 - name: opsmx-terraspin-backend-config
-                   configMap:
-                     name: terraspinbackendconfig
-                containers: 
-                  - name: terraspindestroy
-                    image: 'docker.io/opsmx11/terraspin:2.0'
-                    imagePullPolicy: Always
+                containers:
+                  - command:
+                      - DestroyRun.sh
                     env:
                       - name: artifactAccount
                         value: 
                       - name: stateRepo
-                        value:
+                        value: 
                       - name: uuId
-                        value:
+                        value: 
                       - name: component
                         value: destroy
-                    command: ["DestroyRun.sh"]
+                    image: 'docker.io/opsmx11/terraspin:2.0'
+                    imagePullPolicy: Always
+                    name: terraspindestroy
                     volumeMounts:
-                    - name: opsmx-terraspin-backend-config
-                      mountPath: /home/terraspin/opsmx/app/config/
-
+                      - mountPath: /home/terraspin/opsmx/app/config/
+                        name: opsmx-terraspin-backend-config
+                restartPolicy: Never
+                volumes:
+                  - configMap:
+                      name: terraspinbackendconfig
+                    name: opsmx-terraspin-backend-config

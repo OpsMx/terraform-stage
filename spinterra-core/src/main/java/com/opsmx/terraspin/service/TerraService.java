@@ -43,6 +43,7 @@ import com.opsmx.terraspin.util.TerraAppUtil;
 public class TerraService {
 
 	private static final Logger log = LoggerFactory.getLogger(TerraService.class);
+	static final String fileSeparator = File.separator;
 
 	ApplicationStartup ApplicationStartup = new ApplicationStartup();
 	JSONParser parser = new JSONParser();
@@ -126,7 +127,7 @@ public class TerraService {
 
 		String tfModuledir = (String) correcttModule.get("Dir");
 
-		String exacttfRootModuleFilePathinStr = currentTerraformInfraCodeDir + "/" + tfModuledir;
+		String exacttfRootModuleFilePathinStr = currentTerraformInfraCodeDir + fileSeparator + tfModuledir;
 		File exacttfRootModuleFilePathdir = new File(exacttfRootModuleFilePathinStr);
 
 		TerraformInitThread terraInitOperationCall = new TerraformInitThread(exacttfRootModuleFilePathdir);
@@ -140,7 +141,7 @@ public class TerraService {
 		}
 
 		boolean ischangemod = processutil.runcommand("chmod 777 -R " + exacttfRootModuleFilePathdir);
-		log.info("changing mod of file status :: " + ischangemod + "current dir :: " + exacttfRootModuleFilePathdir);
+		log.info("changing mod of exact tfRootModuleFilePath dir current inferred dir : "+ exacttfRootModuleFilePathinStr +" status mod change :: " + ischangemod);
 
 		TerraformPlanThread terraOperationCall = new TerraformPlanThread(exacttfRootModuleFilePathdir,
 				currentTerraformInfraCodeDir, variableOverrideFile);
@@ -213,23 +214,27 @@ public class TerraService {
 
 		if (StringUtils.isNoneEmpty(artifactAccount)) {
 			String planConfig = new String(
-					"module \"terraModule\"{source = \"git::https://GITUSER:GITPASS@github.com/GITUSER/GITPLANURL\"}");
-			// String gitPlanUrl = spinPlan.split("https://")[1];
-			String gitPlanUrl = spinPlan;
-			// JSONObject artifacts = (JSONObject) halConfigObject.get("artifacts");
-			JSONObject githubArtifactAccount = artifactconfigaccount;
-
-			String gitUser = (String) githubArtifactAccount.get("username");
-			String gittoken = (String) githubArtifactAccount.get("token");
-			String gitPass = (String) githubArtifactAccount.get("password");
-
-			if (StringUtils.isNoneEmpty(gitPass)) {
-				terraformInfraCode = planConfig.replaceAll("GITUSER", gitUser).replaceAll("GITPASS", gitPass)
-						.replaceAll("GITPLANURL", gitPlanUrl);
-			} else {
-				terraformInfraCode = planConfig.replaceAll("GITUSER", gitUser).replaceAll("GITPASS", gittoken)
-						.replaceAll("GITPLANURL", gitPlanUrl);
-			}
+					"module \"terraModule\"{source = \"git::https://github.com/REPONAME\"}");
+			
+			terraformInfraCode = planConfig.replaceAll("REPONAME", spinPlan);
+			
+			/*
+			 * //git::https://github.com/OpsMx/staging-terraform-pm.git//k8/namespace //
+			 * String gitPlanUrl = spinPlan.split("https://")[1]; String gitPlanUrl =
+			 * spinPlan; // JSONObject artifacts = (JSONObject)
+			 * halConfigObject.get("artifacts"); JSONObject githubArtifactAccount =
+			 * artifactconfigaccount;
+			 * 
+			 * String gitUser = (String) githubArtifactAccount.get("username"); String
+			 * gittoken = (String) githubArtifactAccount.get("token"); String gitPass =
+			 * (String) githubArtifactAccount.get("password");
+			 * 
+			 * if (StringUtils.isNoneEmpty(gitPass)) { terraformInfraCode =
+			 * planConfig.replaceAll("GITUSER", gitUser).replaceAll("GITPASS", gitPass)
+			 * .replaceAll("GITPLANURL", gitPlanUrl); } else { terraformInfraCode =
+			 * planConfig.replaceAll("GITUSER", gitUser).replaceAll("GITPASS", gittoken)
+			 * .replaceAll("GITPLANURL", gitPlanUrl); }
+			 */
 
 		} else {
 			terraformInfraCode = spinPlan;

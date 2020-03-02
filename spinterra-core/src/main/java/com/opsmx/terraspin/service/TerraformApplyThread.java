@@ -32,12 +32,12 @@ import org.slf4j.LoggerFactory;
 import com.opsmx.terraspin.util.TerraAppUtil;
 
 class TerraformApplyThread implements Runnable {
-	
+
 	private static final Logger log = LoggerFactory.getLogger(TerraformApplyThread.class);
-	
+
 	private File tfRootModulepath;
-	private File planstatusfileDir;	
-	private String variableOverrideFile; 
+	private File planstatusfileDir;
+	private String variableOverrideFile;
 
 	public TerraformApplyThread() {
 
@@ -55,21 +55,21 @@ class TerraformApplyThread implements Runnable {
 	public void run() {
 
 		String applyScriptPath = System.getProperty("user.home") + "/.opsmx/script/exeTerraformApply.sh";
-		log.info("terraform apply script path : "+applyScriptPath);
+		log.info("In terraform apply part");
 		TerraAppUtil terraAppUtil = new TerraAppUtil();
 
 		Process exec;
 		try {
-				
-			if(StringUtils.isEmpty(variableOverrideFile)) {
+
+			if (StringUtils.isEmpty(variableOverrideFile)) {
 				exec = Runtime.getRuntime().exec(new String[] { "/bin/sh", "-c",
 						"printf 'yes' | sh " + applyScriptPath + " " + tfRootModulepath.getPath() });
 				exec.waitFor();
-				
-			}else {
-				
-				exec = Runtime.getRuntime().exec(new String[] { "/bin/sh", "-c",
-						"printf 'yes' | sh " + applyScriptPath + " " + tfRootModulepath.getPath() + " " + variableOverrideFile });
+
+			} else {
+
+				exec = Runtime.getRuntime().exec(new String[] { "/bin/sh", "-c", "printf 'yes' | sh " + applyScriptPath
+						+ " " + tfRootModulepath.getPath() + " " + variableOverrideFile });
 				exec.waitFor();
 			}
 
@@ -97,7 +97,7 @@ class TerraformApplyThread implements Runnable {
 			} else {
 				statusRootObj.put("status", "TERMINAL");
 				statusRootObj.put("output", line2);
-				log.info("terraform apply script error stream : "+line2);
+				log.info("terraform apply script error stream : " + line2);
 			}
 
 			String filePath = planstatusfileDir.getPath() + "/applyStatus";
@@ -105,10 +105,10 @@ class TerraformApplyThread implements Runnable {
 			InputStream statusInputStream = new ByteArrayInputStream(
 					statusRootObj.toString().getBytes(StandardCharsets.UTF_8));
 			terraAppUtil.overWriteStreamOnFile(statusFile, statusInputStream);
-			log.debug("terraform apply execution status :"+statusRootObj);
+			log.debug("terraform apply execution status :" + statusRootObj);
 		} catch (IOException | InterruptedException e) {
-			log.info("terraform apply execution execption message :"+e.getMessage());			
-		    throw new RuntimeException("terraform apply execution error",e);
+			log.info("terraform apply execution execption message :" + e.getMessage());
+			throw new RuntimeException("terraform apply execution error", e);
 		}
 	}
 
