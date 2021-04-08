@@ -98,7 +98,8 @@ public class GithubProvider extends ArtifactProvider {
 	@Override
 	public String getArtifactSourceReopName(String terraSpinStateRepoPath) {
 		String spinStateRepoNameWithUserName = terraSpinStateRepoPath.trim().split(".git")[0];
-		String spinStateRepoName = spinStateRepoNameWithUserName.trim().split("/")[1];
+		String[] spinStateRepoNameArray = spinStateRepoNameWithUserName.trim().split("/");
+		String spinStateRepoName = spinStateRepoNameArray[spinStateRepoNameArray.length - 1];
 		return spinStateRepoName;
 	}
 
@@ -107,10 +108,14 @@ public class GithubProvider extends ArtifactProvider {
 		return spinStateRepoNameWithUserName + ".git";
 	}
 
-	@Override
 	public String getOverrideFileNameWithPath(String tfVariableOverrideFileRepo) {
 		String VariableOverrideFilePath = tfVariableOverrideFileRepo.trim().split("//")[1];
-		return VariableOverrideFilePath;
+		if (VariableOverrideFilePath.contains("?")) {
+			VariableOverrideFilePath = VariableOverrideFilePath.split("?")[0];
+			return VariableOverrideFilePath;
+		} else {
+			return VariableOverrideFilePath;
+		}
 	}
 
 	@Override
@@ -124,7 +129,8 @@ public class GithubProvider extends ArtifactProvider {
 		githubOverrideFileRepoCloneCommand = githubOverrideFileRepoCloneCommand.replaceAll("REPONAME",
 				tfVariableOverrideFileReopNameWithUsername);
 		// delete first cloneOverrideFile repo dir if exist then do other process
-		String repodirname = tfVariableOverrideFileReopNameWithUsername.replace(".git", "").split("/")[1];
+		String[] repodirnameArray = tfVariableOverrideFileReopNameWithUsername.replace(".git", "").split("/");
+		String repodirname = repodirnameArray[repodirnameArray.length - 1];
 		String OverrideVariableRepodir = cloneDir + fileSeparator + repodirname;
 		File OverrideVariableRepodirfile = new File(OverrideVariableRepodir);
 
@@ -219,6 +225,7 @@ public class GithubProvider extends ArtifactProvider {
 							+ processutil.getStatusRootObj());
 				} else {
 					log.info("error : " + processutil.getStatusRootObj());
+					System.exit(101);
 				}
 			} else {
 				log.info("error : " + processutil.getStatusRootObj());

@@ -247,6 +247,7 @@ public class ApplyComponent {
 
 		} else {
 			log.info("error during pulling state artifact source");
+			System.exit(101);
 		}
 	}
 

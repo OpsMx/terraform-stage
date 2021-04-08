@@ -25,6 +25,7 @@ import org.json.simple.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.amazonaws.util.StringUtils;
 import com.opsmx.terraspin.util.ProcessUtil;
 import com.opsmx.terraspin.util.TerraAppUtil;
 import com.opsmx.terraspin.util.ZipUtil;
@@ -87,7 +88,7 @@ public class BitbucketProvider extends ArtifactProvider {
 		boolean isconfiguseremailcommandsuccess = processutil.runcommand(gitconfiguseremailcommand);
 		log.info("isconfiguseremailcommand got success :: " + isconfiguseremailcommandsuccess
 				+ " and process obj status " + processutil.getStatusRootObj());
-
+		 
 		String gitcredentialHelpercommand = "git config --global credential.helper store";
 		boolean isgitcredentialHelpercommandsuccess = processutil.runcommand(gitcredentialHelpercommand);
 		log.info("isgitcredentialHelpercommandsuccess got success " + isgitcredentialHelpercommandsuccess
@@ -99,7 +100,8 @@ public class BitbucketProvider extends ArtifactProvider {
 	@Override
 	public String getArtifactSourceReopName(String terraSpinStateRepoPath) {
 		String spinStateRepoNameWithUserName = terraSpinStateRepoPath.trim().split(".git")[0];
-		String spinStateRepoName = spinStateRepoNameWithUserName.trim().split("/")[1];
+		String[] spinStateRepoNameArray = spinStateRepoNameWithUserName.trim().split("/");
+		String spinStateRepoName = spinStateRepoNameArray[spinStateRepoNameArray.length-1];
 		return spinStateRepoName;
 	}
 
@@ -111,7 +113,12 @@ public class BitbucketProvider extends ArtifactProvider {
 	@Override
 	public String getOverrideFileNameWithPath(String tfVariableOverrideFileRepo) {
 		String VariableOverrideFilePath = tfVariableOverrideFileRepo.trim().split("//")[1];
-		return VariableOverrideFilePath;
+		if(VariableOverrideFilePath.contains("?")) {
+			VariableOverrideFilePath= VariableOverrideFilePath.split("?")[0];
+			return VariableOverrideFilePath;
+		}else {
+			return VariableOverrideFilePath;
+		}
 	}
 
 	@Override
@@ -122,7 +129,8 @@ public class BitbucketProvider extends ArtifactProvider {
 		bitbucketOverrideFileRepoCloneCommand = bitbucketOverrideFileRepoCloneCommand.replaceAll("REPONAME",
 				tfVariableOverrideFileReopNameWithUsername);
 		// delete first cloneOverrideFile repo dir if exist then do other process
-		String repodirname = tfVariableOverrideFileReopNameWithUsername.replace(".git", "").split("/")[1];
+		String[] repodirnameArray = tfVariableOverrideFileReopNameWithUsername.replace(".git", "").split("/");
+		String repodirname = repodirnameArray[repodirnameArray.length-1];
 		String OverrideVariableRepodir = cloneDir + fileSeparator + repodirname;
 		File OverrideVariableRepodirfile = new File(OverrideVariableRepodir);
 
@@ -222,6 +230,7 @@ public class BitbucketProvider extends ArtifactProvider {
 							+ processutil.getStatusRootObj());
 				} else {
 					log.info("error : " + processutil.getStatusRootObj());
+					System.exit(101);
 				}
 			} else {
 				log.info("error : " + processutil.getStatusRootObj());

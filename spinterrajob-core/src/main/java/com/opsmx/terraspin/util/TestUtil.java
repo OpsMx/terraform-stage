@@ -16,7 +16,12 @@
 
 package com.opsmx.terraspin.util;
 
+import java.io.File;
+
+import org.apache.commons.io.IOUtils;
+
 public class TestUtil {
+	private static final TerraAppUtil terraapputil = new TerraAppUtil();
 
 	void timec() {
 	}
@@ -33,16 +38,28 @@ public class TestUtil {
 		 * System.out.println("hey :" + providerConfig);
 		 */
 
-		String currentUserDir = System.getProperty("user.home");
-		System.out.println("---" + currentUserDir);
+		//String currentUserDir = System.getProperty("user.home");
+		//System.out.println("---" + currentUserDir);
 
-		ProcessUtil processutil = new ProcessUtil();
-		String gitclonecommand = "git clone https://lalitv92:Viui59skranmnmnntewm92!@github.com/lalitv92/trytest.git";
-		String dir = "/home/opsmx/lalit/work/opsmx/extrathing/gittest/test2";
+		//ProcessUtil processutil = new ProcessUtil();
+		//String gitclonecommand = "git clone https://lalitv92:Viui59skranmnmnntewm92!@github.com/lalitv92/trytest.git";
+		//String dir = "/home/opsmx/lalit/work/opsmx/extrathing/gittest/test2";
 
-		boolean isgitcloned = processutil.runcommandwithindir(gitclonecommand, "/home/opsmx");
+		//boolean isgitcloned = processutil.runcommandwithindir(gitclonecommand, "/home/opsmx");
 		// boolean isgitcloned = processutil.runcommand(gitclonecommand);
-		System.out.println("-----" + processutil.getStatusRootObj().toString());
+		//System.out.println("-----" + processutil.getStatusRootObj().toString());
+		
+		
+		String credHelper = "[credential] \n        helper = store";
+		System.out.println(credHelper);
+
+		File gitCredentailFileSource = new File("/home/opsmx/lalit/work/opsmx/extra/.gitconfig");
+		terraapputil.overWriteStreamOnFile(gitCredentailFileSource,
+				IOUtils.toInputStream(credHelper));
+		
+		String gitsourceurl = "scm/cdwor/terraform-planmodules.git//aws/eks?ref=feature/staging-platform";
+
+
 
 	}
 

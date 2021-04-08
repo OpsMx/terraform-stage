@@ -8,7 +8,9 @@ RUN apt-get update && apt-get install -y \
     openssl\
     jq \
     wget \
-    unzip
+    unzip \
+    vim
+
 
 RUN curl -s https://packagecloud.io/install/repositories/github/git-lfs/script.deb.sh | bash
 
@@ -32,13 +34,21 @@ WORKDIR /home/terraspin
 
 RUN wget https://releases.hashicorp.com/terraform/0.12.28/terraform_0.12.28_linux_amd64.zip && \
     unzip -a terraform_0.12.28_linux_amd64.zip && \
-    chmod +x terraform
+    chmod +x terraform &&\
+    rm -rf terraform_0.12.28_linux_amd64.zip
+
+RUN wget -O vault.zip https://releases.hashicorp.com/vault/1.7.0/vault_1.7.0_linux_amd64.zip && \
+    unzip vault.zip && \
+    chmod +x vault && \ 
+    rm -rf vault.zip
 
 RUN curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl" 
 
 RUN chmod +x kubectl
 
 USER root
+
+RUN mv vault /usr/local/bin/vault
 
 RUN mv terraform /usr/local/bin/terraform
 
