@@ -32,10 +32,10 @@ RUN mkdir -p /home/terraspin/artifact /home/terraspin/extra /home/terraspin/over
 
 WORKDIR /home/terraspin
 
-RUN wget https://releases.hashicorp.com/terraform/0.12.28/terraform_0.12.28_linux_amd64.zip && \
-    unzip -a terraform_0.12.28_linux_amd64.zip && \
+RUN wget https://releases.hashicorp.com/terraform/0.15.3/terraform_0.15.3_linux_amd64.zip && \
+    unzip -a terraform_0.15.3_linux_amd64.zip && \
     chmod +x terraform &&\
-    rm -rf terraform_0.12.28_linux_amd64.zip
+    rm -rf terraform_0.15.3_linux_amd64.zip
 
 RUN wget -O vault.zip https://releases.hashicorp.com/vault/1.7.0/vault_1.7.0_linux_amd64.zip && \
     unzip vault.zip && \
